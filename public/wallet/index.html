@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script>
+		//if (window.location.protocol != "https:")
+		//window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
+	</script>
+	<title>AFT Token Wallet</title>
+	<meta charset="utf-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+	<meta name="description" content="AFT Token Wallet">
+
+	<link rel="apple-touch-icon" sizes="180x180" href="images/logo.png">
+	<link rel="icon" type="image/png" sizes="192x192" href="images/logo.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/logo.png">
+
+	<link rel="stylesheet" href="css/dashboardred.css?v=8">
+	<link rel="stylesheet" href="css/progress.min.css?v=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.0.6/sweetalert2.min.css">
+	<link rel="stylesheet" href="css/jquery-u.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+	<!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-WV2728K');</script>
+	<!-- End Google Tag Manager -->
+</head>
+<body>
+	<!-- Google Tag Manager (noscript) -->
+	<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WV2728K" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+	<!-- End Google Tag Manager (noscript) -->
+	<header>	
+		<div class="logo-container">
+			<center>
+				<h1>AFRICOIN Wallet</h1>
+				<!-- <img src="images/logo1.png">-->
+			</center>
+			<div class="wallet-desc" style="display: none" id="desc_main">
+				<center>
+					<p class="small-margin">This is your AFT Token Wallet. It will show both your Ethereum balance and your AFT tokens.
+					<br> You must contribute ETH from this wallet in order to have your tokens appear here.										
+					</p>
+				</center>
+			</div>
+		</div>
+	</header>
+	<div class="b-form-place container">
+
+		<div class="row" id='reg'>
+			<div class="col-md-offset-1 col-md-9" style='display:none' id='right'>
+
+				<div class="login-desc" id="desc_login">
+					<center>
+						<h3 style="padding-bottom: 8px;">AFT Wallet with ShapeShift Integration</h3>
+					</center>
+					<p>This is an ETH and AFT token wallet that you can use for the Smart Voucher.</p>
+					<p>Please enter your info in these boxes and hit Enter to go into wallet. The password is only used when you buy tokens
+						in the wallet.</p>
+					<p> We do not keep your keys, please save them.</p>
+					<p>The
+						<b>Wallet String</b> in the textfile you are downloading is your only access back into this sytem, so
+						<b>do not destroy this file</b>, and
+						<b>back it up</b>.</p>
+					<p>Desktop use recommened</p>
+				</div>
+
+				<div class="b-form-cont">
+					<h2 class="b-form-cont__title" style="display: flex;">
+						<span id="btn_create_account" style="float: left;">Create account (below)</span>
+						<span id="span_or" style="margin-left: auto; margin-right: auto;">or</span>
+						<span style='float:right; cursor: pointer;' onclick='importkey();'>Import wallet string</span>
+					</h2>
+					<div class="b-form b-form--place container-fluid">
+						<div class="b-form__row">
+							<input type="text" id='name' placeholder="Enter your name (and press Enter)">
+						</div>
+						<div class="b-form__row email" style='display:none'>
+							<input type="text" id='email' placeholder="Enter your email (and press Enter)">
+						</div>
+						<div class="b-form__row pre_pass" style='display:none'>
+							<input type="password" id='pre_pass' placeholder="Enter password (and press Enter)">
+						</div>
+						<div class="b-form__row pass" style='display:none'>
+							<input type="password" id='pass' placeholder="Confirm password (and press Enter)">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id='savekey' style='display:none' class='row savekey'>
+			<div class="col-md-12">
+				<div class="b-form-cont">
+
+					<h2 class="b-form-cont__title">
+						<span class='hiname'>Hi</span>
+						<a href="#" style='float:right' onclick='localStorage.clear();window.location.reload();return false'>Exit</a>
+					</h2>
+					<div class="b-form b-form--place container-fluid">
+						<div class='b-form__row'>
+							<p>Write down these 12 words using pen and paper. Please do not just copy and paste your passphrase and store it on your phone.  If you cannot write it down on paper and *store it somewhere safe*, please wait to create your wallet until you can do so.   WITHOUT FOLLOWING THIS INSTRUCTION YOU RISK LOSING ALL FUNDS.</p>
+							<p>WE CANNOT RESTORE THEM</p>
+							<label style="margin-bottom: 8px;">
+								<input type="checkbox" id="check_save_key">
+									I UNDERSTAND
+						    </label>
+							<textarea id='d12keys' onclick="this.focus();this.select()" readonly="readonly">.:...:.</textarea>
+							<br>
+							<br>
+							<i style='color:red' class="fa fa-exclamation-triangle" aria-hidden="true"></i> We do not store your private keys and will not be able to restore them.
+							<br>
+							<br>
+							<input id="button_download_key" type="button" class='btn' onclick='sv("AFT.keys",exportKeystore());return false' value="Download keys" disabled>
+							<br>
+							<br>You will continue after save
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row mainboard" id='info2' style='display:none'>
+
+			<div class="col-md-4 tabs griditem" id='a1'>
+
+				<!-- .b-form-cont -->
+				<div class="b-form-cont">
+					<div style='float:right;padding: 15px 18px;'>
+						<a href="#" id='exprta' onclick='sv("AFT.keys",exportKeystore());return false'>Export keys</a> |
+						<a href="#" onclick='localStorage.clear();window.location.reload();return false'>Exit</a>
+					</div>
+					<h2 class="b-form-cont__title hiname">Wallet Contents</h2>
+					<div class="b-form b-form--place container-fluid">
+						<div class="b-form__row">
+
+							<div id='balancediv'>
+								<p id="balance_tokens" class='balance-tokens'></p>
+								<p id="balance_eth" class='balance-tokens'></p>
+								<a href='#' style='display:none' id='withall' onclick='try2withdrawETH();'>Withdraw all ETH</a>
+								<span id='consolewithdraw'> 
+									<a onclick='window.location.reload()' href="">Refresh</a>
+								</span>
+							</div>
+							<hr />
+							<div id='shapeshift' style="margin-bottom: 30px;">
+								<script>
+									function shapeshift_click(a, e) {
+										e.preventDefault();
+										var link = 'https://shapeshift.io/shifty.html?destination=' + openkey + '&amount=10&output=ETH';
+										window.open(link, '1418115287605',
+											'width=700,height=500,toolbar=0,menubar=0,location=0,status=1,scrollbars=1,resizable=0,left=0,top=0');
+										return false;
+									}
+								</script>
+	
+								<a onclick="shapeshift_click(this, event);" href="#">
+									<img src="images/xs_light_ss.png" class="ss-button">
+								</a>
+								<p style='margin-top: 10px;'>0.5 ETH minimum is <b>only</b> for using ShapeShift to convert tokens to ETH. You may send any amount of ETH to this wallet address to purchase any amount AFT!</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- .b-form-cont -->
+			</div>
+
+			<div class="col-md-4 tabs griditem" id='try2buy'>
+
+				<!-- .b-form-cont -->
+				<div class="b-form-cont">
+					<h2 class="b-form-cont__title">Your ETH and AFT Wallet Address</h2>
+					<div class="b-form b-form--place container-fluid">
+						<div class='b-form__row' style="padding: 0 3px;">
+							<div id='console'></div>
+							<input type='text' style='margin-bottom:8px; font-size: 12.5px;' id='openkey' value=''>
+							<img id='ethqr' src='' width="180px" height="180px" style='display: block; margin: auto;'>
+						</div>
+					</div>
+				</div>
+				<!-- .b-form-cont -->
+			</div>
+
+			<div class="col-md-4 tabs griditem">
+
+				<!-- .b-form-cont -->
+				<div class="b-form-cont">
+					<h2 class="b-form-cont__title">AFT Tokens with ZAR</h2>
+					<div class="b-form b-form--place container-fluid">
+						<div class='b-form__row'>
+							<div class="front-box8">Choose amount of token you want buy</div>
+
+							<div class="front-box2">
+
+								<font class="fi2" style="margin-top: 5px;">TOKEN(s)</font>
+								<input type="number" id="amount" class="inputslider" min="1">
+								<div class="slider-range-i" style="margin-top: 8px;">
+									<div id="slider-range-max"></div>
+								</div>
+								<p style="margin-top: 10px;">
+									<font>ZAR</font>
+									<span id='ethfor100hmq'>...</span>
+								</p>
+								<span style="display:block; margin: auto; text-align: center">Equivalent Funds</span>
+								<hr />
+								<p>
+									<font>BTC</font>
+									<span id='btc
+									for100hmq'>...</span>
+								</p>
+								<p class="plast">
+									<font>ZAR</font>
+									<span id='usdfor100hmq'>....</span>
+								</p>
+							</div>
+							<center>
+								<input type='button' onclick='try2buy($("#ethfor100hmq").html());' id='try2buybtn' class='btn hidden' value='Buy now'>
+								<p id='consolebuy' style="margin-top: 10px;"></p>
+							</center>
+							<hr>
+							<p>It may take a few minutes for your ETH to appear in the wallet, please be patient.</p>
+							<p>Remember to keep a little ETH in this wallet! You will be able to deploy portals and objects into the AFT system for only the cost of ETH gas!</p>
+						</div>
+					</div>
+				</div>
+				<!-- .b-form-cont -->
+			</div>
+
+			<div class="col-md-8 tabs griditem" id='sendtokens'>
+
+				<!-- .b-form-cont -->
+				<div class="b-form-cont">
+					<h2 class="b-form-cont__title">Send tokens</h2>
+					<div class="b-form b-form--place container-fluid">
+						<div class='b-form__row'>
+							<div class='onlyhavetoken'>
+								To address:
+								<Br>
+								<input type='text' id='kuda' style='margin-bottom:20px' id='openkey22' value='0x'> Amount:
+								<Br>
+								<input type='text' id='skoko' style='margin-bottom:20px' value=''>
+
+								<input type='button' onclick='try2send()' class='btn' name='BTN' value='Send'>
+								<span id='consolesend'></span>
+								<script>
+									function try2send() {
+										$("#consolesend").html('.:...::');
+										sendRwTr(0,[$("#kuda").val(),$("#skoko").val()*1000000000000000000],"transfer","#consolesend");
+									}
+								</script>
+							</div>
+						</div> 
+					</div>
+				</div>
+				<!-- .b-form-cont -->
+			</div>
+
+			<div class="col-md-4 tabs griditem" id='a4'>
+
+				<!-- .b-form-cont -->
+				<div class="b-form-cont">
+					<h2 class="b-form-cont__title">ETH Market Rates</h2>
+					<div class="b-form b-form--place container-fluid">
+						<div class='b-form__row'>
+							Price USD :
+							<span id='price_usd'></span>
+							<br> Price BTC :
+							<span id='price_btc'></span>
+							<div id='ethereumstat'></div>
+						</div>
+					</div>
+				</div>
+				<!-- .b-form-cont -->
+			</div>
+
+			<div class="col-md-4 tabs griditem hidden">
+				<div class="b-form-cont">
+					<h2 class="b-form-cont__title">Sell tokens</h2>
+					<div class="b-form b-form--place container-fluid">
+						<div class='b-form__row'>
+							1 AFT TOKEN =
+							<span id='onetoken'>.</span>
+							<br />							
+							<div class='sellnow'>
+								You can sell
+								<span class='balacnetokensnocss'></span> token(s) immediately for
+								<span class='hnew'></span>
+								<input type='button' onclick='try2sell();' class='btn ' value='SELL NOW'>
+								<div id='consolesell'></div>
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-4 tabs griditem">
+				<div class="b-form-cont">
+					<h2 class="b-form-cont__title">Market rates</h2>
+					<div class="b-form b-form--place container-fluid">
+						<div class='b-form__row'>
+							Pending token listing in markets
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-12 tabs griditem" id='a4'>
+
+				<!-- .b-form-cont -->
+				<div class="b-form-cont">
+					<h2 class="b-form-cont__title">Transactions</h2>
+					<div class="b-form b-form--place container-fluid">
+						<div class='b-form__row'>
+							<div id='tx_history'></div>
+						</div>
+					</div>
+				</div>
+				<!-- .b-form-cont -->
+			</div>
+
+		</div>
+		<!-- .row -->
+	</div>
+	<!-- .b-form-place -->
+
+	<script src="js/web3.min.js"></script>
+	<script src="js/lightwallet.min.js"></script>
+
+	<script src="js/progress.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.0.6/sweetalert2.min.js"></script>
+	<script src="erc20dashboard.js?v=23"></script>
+	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+	<script>
+		var tokens_for_one_eth = 1;
+		var tokenPrice = 1 / tokens_for_one_eth;
+		tokenPrice = tokenPrice.toFixed(5);
+
+		$("#onetoken").html(tokenPrice + " ETH");
+		recalc();
+
+		$.get(option_etherscan_api + "/api?module=stats&action=ethprice&apikey=" + option_etherscan_api_key, function (d) {
+			console.log(d);
+			// $("#market_cap_usd").html(d.result.ethusd + " USD");
+			$("#price_btc").html(d.result.ethbtc);
+			$("#price_usd").html(d.result.ethusd);
+			recalc();
+		}, "json");
+
+	</script>
+
+	<script>
+		build_state();
+		rebalance();
+		setInterval(rebalance, 10000);
+	</script>
+	<script>
+		if (localStorage.getItem("privkey")) {
+			$("#info2").html("You use old version of dashboard. Save this key " + localStorage.getItem("privkey") +
+				". Open myetherwallet.com > login using plain key > and add token " + erc20contract_address +
+				". Or <a href='#' onclick='localStorage.clear();window.location.reload();return false'>logout</a>"
+			);
+		}
+	</script>
+</body>
+
+</html>
