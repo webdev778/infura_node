@@ -61,6 +61,9 @@ app.post('/api/secret/test', (req, res) => {
 const AFT = require('./aft');
 app.post('/api/sendToken', AFT.sendToken);
 
+// const ACT = require('./account');
+// app.post('/api/sendToken', ACT.sendTransaction);
+
 
 // set path for static
 const walletBuild = path.join(__dirname, 'public');

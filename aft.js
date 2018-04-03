@@ -7,8 +7,8 @@ import BN from 'bn.js';
 import Web3 from 'web3'
 var Tx = require('ethereumjs-tx');
 
-const _sendToken = async (destAddress, transferAmount) => {
-  const {my_privkey, owner_addr : myAddress, contract_addr : contractAddress, infura_api_url}= process.env;
+const _sendSignedToken = async (destAddress, transferAmount) => {
+  const {my_privkey, owner_addr : myAddress, contract_addr : contractAddress, infura_api_url, GAS_PRICE, GAS_LIMIT}= process.env;
   
   // This code was written and tested using web3 version 1.0.0-beta.31
 
@@ -34,8 +34,8 @@ const _sendToken = async (destAddress, transferAmount) => {
   var rawTransaction = {
       "from": myAddress,
       "nonce": "0x" + count.toString(16),
-      "gasPrice": "0xcce416600",                  
-      "gasLimit": "0x33450",
+      "gasPrice": GAS_PRICE,                  
+      "gasLimit": GAS_LIMIT,
       "to": contractAddress,
       "value": "0x0",
       "data": contract.methods.transfer(destAddress, transferAmount).encodeABI(),
@@ -46,19 +46,29 @@ const _sendToken = async (destAddress, transferAmount) => {
   var privKey = new Buffer(my_privkey, 'hex');
   var tx = new Tx(rawTransaction);
   tx.sign(privKey);
+  var tx_hash = tx.hash();
+  var tx_hash_str = "0x"+tx_hash.toString('hex');
+  console.log(`Transaction Hash: ${tx_hash.toString('hex')}`);
+
   var serializedTx = tx.serialize();
 
   // Comment out these three lines if you don't really want to send the TX right now
   console.log(`Attempting to send signed tx:  ${serializedTx.toString('hex')}`);
-  var receipt = await web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'));
-  console.log(`Receipt info:  ${JSON.stringify(receipt, null, '\t')}`);
+  web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
+    .on('receipt', (receipt)=>{
+      console.log(`Receipt info:  ${JSON.stringify(receipt, null, '\t')}`);
 
+      //update database
+    });
+
+  /*
   // The balance may not be updated yet, but let's check
   balance = await contract.methods.balanceOf(myAddress).call();
   console.log(`Balance after send: ${balance}`);
 
   console.log(`txHash:${receipt.transactionHash}`);
-  return receipt.transactionHash;
+  */
+  return tx_hash_str;
 }
 
 export const sendToken = async (req, res) => {
@@ -80,7 +90,7 @@ export const sendToken = async (req, res) => {
   try {
     const m = Web3.utils.toWei(amount, 'ether');
     console.log(m);
-    const txHash = await _sendToken(toAddr, m);
+    const txHash = await _sendSignedToken(toAddr, m);
 
     res.json({
       success: 200,
